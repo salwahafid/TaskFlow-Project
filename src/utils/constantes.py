@@ -1,0 +1,3 @@
+A_FAIRE: str = "A_FAIRE"
+EN_COURS: str = "EN_COURS"
+TERMINEE: str = "TERMINEE"
