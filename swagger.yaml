@@ -1,0 +1,289 @@
+openapi: 3.0.3
+
+info:
+  title: TaskFlow API
+  description: API de gestion des tâches collaboratives TaskFlow
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api
+    description: Serveur local
+
+tags:
+  - name: Auth
+  - name: Users
+  - name: Projects
+  - name: Tasks
+  - name: Notifications
+
+paths:
+
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Inscription d’un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Utilisateur créé avec succès
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Connexion réussie
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Liste des utilisateurs
+      responses:
+        '200':
+          description: Liste récupérée avec succès
+
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: Afficher tous les projets
+      responses:
+        '200':
+          description: Liste des projets
+
+    post:
+      tags:
+        - Projects
+      summary: Créer un projet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '201':
+          description: Projet créé
+
+  /projects/{id}:
+    put:
+      tags:
+        - Projects
+      summary: Modifier un projet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Projet modifié
+
+    delete:
+      tags:
+        - Projects
+      summary: Supprimer un projet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Projet supprimé
+
+  /tasks:
+    get:
+      tags:
+        - Tasks
+      summary: Afficher toutes les tâches
+      responses:
+        '200':
+          description: Liste des tâches
+
+    post:
+      tags:
+        - Tasks
+      summary: Créer une tâche
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Tâche créée
+
+  /tasks/{id}:
+    put:
+      tags:
+        - Tasks
+      summary: Modifier une tâche
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tâche modifiée
+
+    delete:
+      tags:
+        - Tasks
+      summary: Supprimer une tâche
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tâche supprimée
+
+  /tasks/{id}/assign:
+    put:
+      tags:
+        - Tasks
+      summary: Assigner une tâche à un membre
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+      responses:
+        '200':
+          description: Tâche assignée
+
+  /tasks/{id}/status:
+    put:
+      tags:
+        - Tasks
+      summary: Modifier le statut d’une tâche
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - A_FAIRE
+                    - EN_COURS
+                    - TERMINEE
+      responses:
+        '200':
+          description: Statut mis à jour
+
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Afficher les notifications
+      responses:
+        '200':
+          description: Liste des notifications
+
+components:
+
+  schemas:
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - MEMBRE
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        description:
+          type: string
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        titre:
+          type: string
+        description:
+          type: string
+        statut:
+          type: string
+          enum:
+            - A_FAIRE
+            - EN_COURS
+            - TERMINEE
+        dateEcheance:
+          type: string
+          format: date
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        date:
+          type: string
+          format: date-time
